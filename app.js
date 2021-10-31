@@ -48,8 +48,8 @@ app.use((req,res,next)=>{
     next();
 })
 
-app.use('/',router);
-app.use('/users',require('./routes/users'));
+// app.use('/',router);
+app.use('/',require('./routes/users'));
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT,()=>{

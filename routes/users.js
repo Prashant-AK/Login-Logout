@@ -3,8 +3,12 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const passport = require('passport'); 
+var uploads3=require('../middleware/awsupload')
 
 
+router.get('/',(req,res)=>{
+    res.render('welcome');
+})
 //Login Page
 router.get('/login',(req,res)=>{
     res.render('login')
@@ -14,6 +18,18 @@ router.get('/login',(req,res)=>{
 router.get('/register',(req,res)=>{
     res.render('register')
 });
+
+//upload file get
+router.get('/upload',(req,res)=>{
+    res.render('upload')
+});
+
+//upload a file post
+router.post('/uploaddata',uploads3.array('img',10),(req,res)=>{
+    // console.log(req.file)
+    res.redirect("/dashboard")
+    
+    })
 
 //Register Handler
 router.post('/register',(req,res)=>{
@@ -54,7 +70,7 @@ router.post('/register',(req,res)=>{
             newUser.save()
             .then(user=>{
                 req.flash('success_msg','You are now register and can log in')
-                res.redirect('/users/login');
+                res.redirect('/login');
             })
             .catch(err=>console.log(err));
             })
@@ -76,7 +92,7 @@ const checkAuthenicated = function(req,res,next){
         return next();
     }
     else{
-        res.redirect('/users/login');
+        res.redirect('/login');
     }
 }
 //Dashboard Handler
@@ -87,7 +103,7 @@ router.get('/dashboard',checkAuthenicated,(req,res)=>{
 //Login Handler
 router.post('/login',(req,res,next)=>{
     passport.authenticate('local',{
-        successRedirect :'/users/dashboard',
+        successRedirect :'/dashboard',
         failureRedirect : '/',
         failureFlash:true
     })(req,res,next);
